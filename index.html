@@ -1,644 +1,384 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>🎤 방구석 노래방</title>
-<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="ë§ì´í¬"/>
+<meta name="theme-color" content="#0d0d12"/>
+<link rel="manifest" href="manifest.json"/>
+<title>ë§ì´í¬ ë¸ëë°©</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: rgba(255,255,255,0.04);
-    --border: rgba(255,255,255,0.08);
-    --neon-pink: #ff3cac;
-    --neon-teal: #00f5d4;
-    --neon-yellow: #ffe45e;
-    --text: #f0f0f0;
-    --muted: #888;
-    --danger: #ff4444;
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body{
+  background:#0d0d12;
+  color:#f0f0f0;
+  font-family:'Noto Sans KR',sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100dvh;
+  padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
+  gap:0;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans KR', sans-serif;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+/* subtle bg glow */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(180,80,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(0,200,180,0.06) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
 
-  /* Animated background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255,60,172,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0,245,212,0.10) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 60% at 60% 40%, rgba(255,228,94,0.05) 0%, transparent 60%);
-    z-index: 0;
-    pointer-events: none;
-  }
+.wrap{
+  position:relative;z-index:1;
+  width:100%;max-width:360px;
+  display:flex;flex-direction:column;
+  align-items:center;gap:40px;
+}
 
-  .app {
-    position: relative;
-    z-index: 1;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0 16px 32px;
-  }
+/* Title */
+.title{text-align:center}
+.title h1{
+  font-family:'Black Han Sans',sans-serif;
+  font-size:22px;letter-spacing:3px;
+  background:linear-gradient(135deg,#cc88ff,#00e8cc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.title p{font-size:12px;color:#666;margin-top:6px;letter-spacing:0.5px}
 
-  /* Header */
-  .header {
-    padding: 52px 0 24px;
-    text-align: center;
-  }
-  .header-icon {
-    font-size: 48px;
-    line-height: 1;
-    display: block;
-    margin-bottom: 12px;
-    filter: drop-shadow(0 0 20px rgba(255,60,172,0.6));
-    animation: float 3s ease-in-out infinite;
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-  .header h1 {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 28px;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, var(--neon-pink), var(--neon-teal));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .header p {
-    margin-top: 6px;
-    font-size: 13px;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-  }
+/* BIG MIC BUTTON */
+.mic-wrap{position:relative;display:flex;align-items:center;justify-content:center}
 
-  /* Card */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 16px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .card-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .card-label .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--neon-pink);
-    box-shadow: 0 0 8px var(--neon-pink);
-  }
+.ring{
+  position:absolute;
+  width:160px;height:160px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.06);
+  animation:spin 8s linear infinite;
+}
+.ring:nth-child(2){width:190px;height:190px;animation-duration:12s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* URL Input */
-  .url-row {
-    display: flex;
-    gap: 8px;
-  }
-  .url-input {
-    flex: 1;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: var(--text);
-    font-size: 14px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-  }
-  .url-input:focus { border-color: rgba(255,60,172,0.5); }
-  .url-input::placeholder { color: var(--muted); }
+.mic-btn{
+  width:130px;height:130px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.04);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:6px;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative;z-index:2;
+}
+.mic-btn:active{transform:scale(0.94)}
 
-  .btn-load {
-    background: linear-gradient(135deg, var(--neon-pink), #784ba0);
-    border: none;
-    border-radius: 12px;
-    padding: 12px 16px;
-    color: white;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: opacity 0.2s, transform 0.1s;
-    letter-spacing: 0.5px;
-  }
-  .btn-load:active { opacity: 0.8; transform: scale(0.97); }
+.mic-btn.on{
+  background:rgba(200,80,255,0.12);
+  border-color:rgba(200,80,255,0.5);
+}
+.mic-btn.on .ring-pulse{
+  animation:pulse 1.4s ease-out infinite;
+}
 
-  /* Video container */
-  .video-wrap {
-    display: none;
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    border-radius: 14px;
-    overflow: hidden;
-    margin-top: 12px;
-  }
-  .video-wrap.visible { display: block; }
-  .video-wrap iframe {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    border: none;
-  }
+.ring-pulse{
+  position:absolute;inset:-20px;
+  border-radius:50%;
+  border:1.5px solid rgba(200,80,255,0.4);
+  opacity:0;
+}
+@keyframes pulse{
+  0%{transform:scale(0.85);opacity:0.8}
+  100%{transform:scale(1.15);opacity:0}
+}
 
-  /* Mic section */
-  .mic-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
+.mic-icon{font-size:44px;line-height:1}
+.mic-label{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#666;transition:color 0.3s}
+.mic-btn.on .mic-label{color:#cc88ff}
 
-  .mic-btn {
-    width: 96px; height: 96px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.05);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 36px;
-    transition: all 0.3s;
-    position: relative;
-    overflow: visible;
-  }
-  .mic-btn.active {
-    background: rgba(255,60,172,0.15);
-    border-color: var(--neon-pink);
-    box-shadow: 0 0 0 0 rgba(255,60,172,0.4);
-    animation: pulse-ring 1.5s ease-out infinite;
-  }
-  @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgba(255,60,172,0.4); }
-    70% { box-shadow: 0 0 0 20px rgba(255,60,172,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,60,172,0); }
-  }
-  .mic-btn-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-top: 4px;
-    color: var(--muted);
-  }
-  .mic-btn.active .mic-btn-label { color: var(--neon-pink); }
+/* Status */
+.status{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 20px;
+  border-radius:100px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);
+  font-size:13px;color:#555;
+  transition:all 0.3s;
+  min-width:200px;justify-content:center;
+}
+.status.on{
+  border-color:rgba(0,232,200,0.3);
+  background:rgba(0,232,200,0.07);
+  color:#00e8cc;
+}
+.status.error{
+  border-color:rgba(255,80,80,0.3);
+  background:rgba(255,80,80,0.07);
+  color:#ff6060;
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:currentColor;flex-shrink:0;
+}
+.status.on .status-dot{animation:blink 1s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
 
-  /* Status badge */
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 500;
-    background: rgba(255,255,255,0.06);
-    color: var(--muted);
-    border: 1px solid var(--border);
-    transition: all 0.3s;
-  }
-  .status-badge.on {
-    background: rgba(0,245,212,0.1);
-    color: var(--neon-teal);
-    border-color: rgba(0,245,212,0.3);
-  }
-  .status-badge.error {
-    background: rgba(255,68,68,0.1);
-    color: var(--danger);
-    border-color: rgba(255,68,68,0.3);
-  }
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  .status-badge.on .status-dot { animation: blink 1s ease-in-out infinite; }
-  @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
+/* Level meter */
+.level{
+  display:flex;align-items:flex-end;gap:3px;
+  height:40px;width:100%;max-width:240px;
+  justify-content:center;
+}
+.bar{
+  width:6px;border-radius:3px;
+  background:rgba(255,255,255,0.08);
+  height:4px;
+  transition:height 0.07s ease,background 0.07s ease;
+  flex-shrink:0;
+}
 
-  /* Volume sliders */
-  .vol-row {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .vol-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .vol-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
-  .vol-label { font-size: 12px; color: var(--muted); width: 36px; flex-shrink: 0; }
+/* Volume */
+.vol-section{width:100%}
+.vol-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;
+}
+.vol-icon{font-size:20px;flex-shrink:0}
+.vol-label{font-size:12px;color:#555;width:40px;flex-shrink:0}
+input[type=range]{
+  flex:1;-webkit-appearance:none;appearance:none;
+  height:3px;border-radius:3px;
+  background:linear-gradient(to right,#cc88ff var(--v,70%),rgba(255,255,255,0.1) var(--v,70%));
+  outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:22px;height:22px;border-radius:50%;
+  background:white;box-shadow:0 2px 6px rgba(0,0,0,0.5);
+}
+.vol-val{font-size:12px;color:#555;width:34px;text-align:right;flex-shrink:0}
 
-  input[type=range] {
-    flex: 1;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 4px;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-  }
-  .slider-mr {
-    background: linear-gradient(to right, var(--neon-teal) var(--val, 70%), rgba(255,255,255,0.1) var(--val, 70%));
-  }
-  .slider-mic {
-    background: linear-gradient(to right, var(--neon-pink) var(--val, 70%), rgba(255,255,255,0.1) var(--val, 70%));
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  }
-  .vol-value {
-    font-size: 12px;
-    color: var(--muted);
-    width: 32px;
-    text-align: right;
-    flex-shrink: 0;
-  }
+/* Hint */
+.hint{
+  background:rgba(255,200,50,0.06);
+  border:1px solid rgba(255,200,50,0.15);
+  border-radius:14px;
+  padding:14px 16px;
+  font-size:12px;color:rgba(255,200,80,0.75);
+  line-height:1.7;width:100%;
+}
+.hint strong{display:block;margin-bottom:4px;font-size:13px}
 
-  /* Level meter */
-  .level-wrap {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    height: 20px;
-    width: 100%;
-    justify-content: center;
-  }
-  .level-bar {
-    width: 5px;
-    border-radius: 3px;
-    background: rgba(255,255,255,0.1);
-    height: 6px;
-    transition: height 0.08s ease, background 0.08s ease;
-  }
-
-  /* Notice */
-  .notice {
-    background: rgba(255,228,94,0.07);
-    border: 1px solid rgba(255,228,94,0.2);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 12px;
-    color: rgba(255,228,94,0.8);
-    line-height: 1.6;
-    display: flex;
-    gap: 10px;
-  }
-  .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-
-  /* Quick links */
-  .quick-links {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .quick-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 10px 12px;
-    color: var(--text);
-    font-size: 12px;
-    font-family: inherit;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
-    line-height: 1.4;
-    text-decoration: none;
-    display: block;
-  }
-  .quick-btn:active { background: rgba(255,255,255,0.1); transform: scale(0.97); }
-  .quick-btn span { display: block; font-size: 10px; color: var(--muted); margin-top: 2px; }
+/* Install banner */
+.install-hint{
+  font-size:11px;color:#444;text-align:center;
+  line-height:1.6;
+}
+.install-hint strong{color:#666}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="wrap">
 
-  <!-- Header -->
-  <div class="header">
-    <i class="header-icon">🎤</i>
-    <h1>방구석 노래방</h1>
-    <p>YouTube MR + 마이크 동시 재생</p>
+  <div class="title">
+    <h1>ð¤ ë§ì´í¬</h1>
+    <p>ì íë¸ íê³  Â· ì´ ì± ë°±ê·¸ë¼ì´ë Â· ë¸ë</p>
   </div>
 
-  <!-- YouTube Section -->
-  <div class="card">
-    <div class="card-label"><span class="dot"></span> MR 재생</div>
-    <div class="url-row">
-      <input class="url-input" id="urlInput" type="url"
-        placeholder="YouTube URL 붙여넣기"
-        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-      <button class="btn-load" onclick="loadVideo()">재생</button>
-    </div>
-    <div class="quick-links">
-      <button class="quick-btn" onclick="loadSample('https://www.youtube.com/watch?v=tbDRWBzxMDI')">
-        🎵 인기 노래방 MR
-        <span>샘플 재생</span>
-      </button>
-      <button class="quick-btn" onclick="openYoutube()">
-        🔍 YouTube에서 검색
-        <span>새 탭으로 열기</span>
-      </button>
-    </div>
-    <div class="video-wrap" id="videoWrap">
-      <div id="ytPlayer"></div>
-    </div>
+  <div class="mic-wrap">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+      <div class="ring-pulse"></div>
+      <span class="mic-icon">ðï¸</span>
+      <span class="mic-label" id="micLabel">í­íì¬ ìì</span>
+    </button>
   </div>
 
-  <!-- Mic Section -->
-  <div class="card">
-    <div class="card-label"><span class="dot" style="background:var(--neon-teal);box-shadow:0 0 8px var(--neon-teal)"></span> 마이크</div>
-    <div class="mic-main">
-      <button class="mic-btn" id="micBtn" onclick="toggleMic()">
-        🎙️
-        <span class="mic-btn-label" id="micBtnLabel">탭하여 시작</span>
-      </button>
-      <div class="status-badge" id="statusBadge">
-        <span class="status-dot"></span>
-        <span id="statusText">마이크 꺼짐</span>
-      </div>
-      <div class="level-wrap" id="levelMeter">
-        <!-- bars injected by JS -->
-      </div>
-    </div>
+  <div class="status" id="status">
+    <span class="status-dot"></span>
+    <span id="statusTxt">ë§ì´í¬ êº¼ì§</span>
   </div>
 
-  <!-- Volume Controls -->
-  <div class="card">
-    <div class="card-label"><span class="dot" style="background:var(--neon-yellow);box-shadow:0 0 8px var(--neon-yellow)"></span> 볼륨 조절</div>
+  <div class="level" id="level"></div>
+
+  <div class="vol-section">
     <div class="vol-row">
-      <div class="vol-item">
-        <span class="vol-icon">🎵</span>
-        <span class="vol-label">MR</span>
-        <input type="range" class="slider-mr" id="mrVol" min="0" max="100" value="70"
-          oninput="onMrVol(this.value)" style="--val:70%" />
-        <span class="vol-value" id="mrVolVal">70%</span>
-      </div>
-      <div class="vol-item">
-        <span class="vol-icon">🎤</span>
-        <span class="vol-label">목소리</span>
-        <input type="range" class="slider-mic" id="micVol" min="0" max="150" value="100"
-          oninput="onMicVol(this.value)" style="--val:67%" />
-        <span class="vol-value" id="micVolVal">100%</span>
-      </div>
+      <span class="vol-icon">ð¤</span>
+      <span class="vol-label">ëª©ìë¦¬</span>
+      <input type="range" id="micVol" min="0" max="200" value="100"
+        oninput="onVol(this.value)" style="--v:50%"/>
+      <span class="vol-val" id="volVal">100%</span>
     </div>
   </div>
 
-  <!-- Notice -->
-  <div class="notice">
-    <span class="notice-icon">💡</span>
-    <div>
-      <strong>사용 팁</strong><br>
-      무선 이어폰을 끼고 사용하면 MR + 내 목소리를 동시에 들을 수 있어요. iOS Safari에서 마이크 권한을 허용해 주세요. 이어폰 미착용 시 하울링이 발생할 수 있습니다.
-    </div>
+  <div class="hint">
+    <strong>ð¡ ì¬ì©ë²</strong>
+    1. ë¬´ì  ì´ì´í° ì°©ì©<br>
+    2. ë§ì´í¬ ë²í¼ í­ â ê¶í íì©<br>
+    3. í ë²í¼ì¼ë¡ ì´ ì±ì ë°±ê·¸ë¼ì´ëë¡<br>
+    4. YouTubeìì MR ì¬ì<br>
+    5. ì´ì´í°ì¼ë¡ MR + ë´ ëª©ìë¦¬ ëì ì²­ì·¨ ðµ
+  </div>
+
+  <div class="install-hint">
+    Safari â <strong>ê³µì </strong> â <strong>í íë©´ì ì¶ê°</strong><br>
+    ì±ì²ë¼ ì¤ì¹íë©´ ë ìì ì ì¼ë¡ ìëí´ì
   </div>
 
 </div>
 
 <script>
-// ─── YouTube IFrame API ───────────────────────────────────
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-document.head.appendChild(tag);
+// ââ Level meter bars ââââââââââââââââââââââââââââââââââââââ
+const BARS = 28;
+const levelEl = document.getElementById('level');
+for(let i=0;i<BARS;i++){
+  const b=document.createElement('div');
+  b.className='bar';
+  levelEl.appendChild(b);
+}
+const bars=[...levelEl.querySelectorAll('.bar')];
 
-var player;
-var currentVideoId = null;
+// ââ Audio state âââââââââââââââââââââââââââââââââââââââââââ
+let ctx=null, micStream=null, micSrc=null, gainNode=null, analyser=null, raf=null;
+let silentSrc=null; // iOS background keep-alive
+let isOn=false;
 
-window.onYouTubeIframeAPIReady = function() {
-  // ready
-};
-
-function extractVideoId(url) {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes('youtu.be')) return u.pathname.slice(1).split('?')[0];
-    return u.searchParams.get('v') || null;
-  } catch {
-    // maybe it's already an ID
-    if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) return url.trim();
-    return null;
-  }
+function setStatus(type,txt){
+  const el=document.getElementById('status');
+  el.className='status '+type;
+  document.getElementById('statusTxt').textContent=txt;
 }
 
-function loadVideo() {
-  const url = document.getElementById('urlInput').value.trim();
-  if (!url) { alert('YouTube URL을 입력해 주세요.'); return; }
-  const vid = extractVideoId(url);
-  if (!vid) { alert('올바른 YouTube URL이 아닙니다.'); return; }
-  renderPlayer(vid);
+async function toggleMic(){
+  if(isOn) stopMic(); else await startMic();
 }
 
-function loadSample(url) {
-  document.getElementById('urlInput').value = url;
-  loadVideo();
-}
+async function startMic(){
+  try{
+    setStatus('','ì°ê²° ì¤...');
 
-function openYoutube() {
-  window.open('https://www.youtube.com/results?search_query=노래방+MR', '_blank');
-}
-
-function renderPlayer(videoId) {
-  currentVideoId = videoId;
-  const wrap = document.getElementById('videoWrap');
-  wrap.classList.add('visible');
-
-  if (player) {
-    player.loadVideoById(videoId);
-    return;
-  }
-
-  player = new YT.Player('ytPlayer', {
-    videoId: videoId,
-    playerVars: {
-      playsinline: 1,
-      rel: 0,
-      modestbranding: 1,
-    },
-    events: {
-      onReady: function(e) {
-        e.target.setVolume(parseInt(document.getElementById('mrVol').value));
-        e.target.playVideo();
-      }
+    // â  AudioContext â must be in user gesture
+    if(!ctx){
+      ctx=new (window.AudioContext||window.webkitAudioContext)({
+        latencyHint:'interactive',
+        sampleRate:44100
+      });
     }
-  });
-}
+    if(ctx.state==='suspended') await ctx.resume();
 
-function onMrVol(val) {
-  document.getElementById('mrVolVal').textContent = val + '%';
-  document.getElementById('mrVol').style.setProperty('--val', val + '%');
-  if (player && player.setVolume) player.setVolume(parseInt(val));
-}
-
-// ─── Mic / Web Audio ─────────────────────────────────────
-var audioCtx = null;
-var micStream = null;
-var micSource = null;
-var micGain = null;
-var analyser = null;
-var micActive = false;
-var levelRAF = null;
-
-const BARS = 20;
-const levelMeter = document.getElementById('levelMeter');
-for (let i = 0; i < BARS; i++) {
-  const b = document.createElement('div');
-  b.className = 'level-bar';
-  levelMeter.appendChild(b);
-}
-const bars = levelMeter.querySelectorAll('.level-bar');
-
-function setStatus(type, text) {
-  const badge = document.getElementById('statusBadge');
-  const label = document.getElementById('statusText');
-  badge.className = 'status-badge ' + type;
-  label.textContent = text;
-}
-
-async function toggleMic() {
-  if (micActive) {
-    stopMic();
-  } else {
-    await startMic();
-  }
-}
-
-async function startMic() {
-  try {
-    setStatus('', '권한 요청 중...');
-
-    // iOS requires AudioContext to be created in user gesture
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-      await audioCtx.resume();
+    // â¡ Silent loop â iOS keeps audio session alive in background
+    if(!silentSrc){
+      const buf=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate); // 3s silent
+      silentSrc=ctx.createBufferSource();
+      silentSrc.buffer=buf;
+      silentSrc.loop=true;
+      silentSrc.connect(ctx.destination);
+      silentSrc.start(0);
     }
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        sampleRate: 44100
+    // â¢ Mic
+    const stream=await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:true,
+        autoGainControl:false,
       },
-      video: false
+      video:false
     });
 
-    micStream = stream;
-    micSource = audioCtx.createMediaStreamSource(stream);
+    micStream=stream;
+    micSrc=ctx.createMediaStreamSource(stream);
 
-    micGain = audioCtx.createGain();
-    micGain.gain.value = parseInt(document.getElementById('micVol').value) / 100;
+    gainNode=ctx.createGain();
+    gainNode.gain.value=parseInt(document.getElementById('micVol').value)/100;
 
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
+    analyser=ctx.createAnalyser();
+    analyser.fftSize=128;
 
-    micSource.connect(micGain);
-    micGain.connect(analyser);
-    micGain.connect(audioCtx.destination);
+    micSrc.connect(gainNode);
+    gainNode.connect(analyser);
+    gainNode.connect(ctx.destination);
 
-    micActive = true;
+    isOn=true;
+    document.getElementById('micBtn').classList.add('on');
+    document.getElementById('micLabel').textContent='í­íì¬ ëê¸°';
+    setStatus('on','ð´ LIVE â ëª©ìë¦¬ ì¶ë ¥ ì¤');
+    drawBars();
 
-    const btn = document.getElementById('micBtn');
-    const lbl = document.getElementById('micBtnLabel');
-    btn.classList.add('active');
-    lbl.textContent = '탭하여 끄기';
-
-    setStatus('on', '마이크 켜짐 🔴 LIVE');
-    drawLevel();
-
-  } catch (err) {
+  }catch(err){
     console.error(err);
-    if (err.name === 'NotAllowedError') {
-      setStatus('error', '마이크 권한이 거부됨');
-      alert('마이크 권한을 허용해 주세요.\n설정 > Safari > 마이크');
-    } else {
-      setStatus('error', '마이크 오류: ' + err.message);
+    if(err.name==='NotAllowedError'){
+      setStatus('error','ë§ì´í¬ ê¶í ê±°ë¶ë¨');
+      alert('ë§ì´í¬ ê¶íì íì©í´ ì£¼ì¸ì.\nì¤ì  ì± â Safari â ë§ì´í¬ â íì©');
+    }else{
+      setStatus('error','ì¤ë¥: '+err.message);
     }
   }
 }
 
-function stopMic() {
-  if (micStream) {
-    micStream.getTracks().forEach(t => t.stop());
-    micStream = null;
-  }
-  if (micSource) { micSource.disconnect(); micSource = null; }
-  if (micGain) { micGain.disconnect(); micGain = null; }
-  if (analyser) { analyser.disconnect(); analyser = null; }
-
-  micActive = false;
-
-  const btn = document.getElementById('micBtn');
-  const lbl = document.getElementById('micBtnLabel');
-  btn.classList.remove('active');
-  lbl.textContent = '탭하여 시작';
-  setStatus('', '마이크 꺼짐');
-
-  if (levelRAF) { cancelAnimationFrame(levelRAF); levelRAF = null; }
-  bars.forEach(b => { b.style.height = '6px'; b.style.background = 'rgba(255,255,255,0.1)'; });
+function stopMic(){
+  if(micStream) micStream.getTracks().forEach(t=>t.stop());
+  if(micSrc){micSrc.disconnect();micSrc=null;}
+  if(gainNode){gainNode.disconnect();gainNode=null;}
+  if(analyser){analyser.disconnect();analyser=null;}
+  micStream=null;
+  isOn=false;
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  bars.forEach(b=>{b.style.height='4px';b.style.background='rgba(255,255,255,0.08)';});
+  document.getElementById('micBtn').classList.remove('on');
+  document.getElementById('micLabel').textContent='í­íì¬ ìì';
+  setStatus('','ë§ì´í¬ êº¼ì§');
 }
 
-function onMicVol(val) {
-  document.getElementById('micVolVal').textContent = val + '%';
-  const pct = (val / 150 * 100).toFixed(0);
-  document.getElementById('micVol').style.setProperty('--val', pct + '%');
-  if (micGain) micGain.gain.value = val / 100;
+function onVol(v){
+  const pct=Math.round(v/200*100);
+  document.getElementById('volVal').textContent=v+'%';
+  document.getElementById('micVol').style.setProperty('--v',pct+'%');
+  if(gainNode) gainNode.gain.value=v/100;
 }
 
-function drawLevel() {
-  if (!analyser) return;
-  const dataArr = new Uint8Array(analyser.frequencyBinCount);
-  analyser.getByteFrequencyData(dataArr);
-
-  const step = Math.floor(dataArr.length / BARS);
-  bars.forEach((bar, i) => {
-    const val = dataArr[i * step] / 255;
-    const h = Math.max(4, val * 36);
-    bar.style.height = h + 'px';
-    if (val > 0.7) bar.style.background = 'var(--neon-pink)';
-    else if (val > 0.3) bar.style.background = 'var(--neon-teal)';
-    else bar.style.background = 'rgba(255,255,255,0.15)';
+function drawBars(){
+  if(!analyser){return;}
+  const data=new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+  const step=Math.floor(data.length/BARS);
+  bars.forEach((bar,i)=>{
+    const v=data[i*step]/255;
+    const h=Math.max(4,v*36);
+    bar.style.height=h+'px';
+    if(v>0.7) bar.style.background='#cc88ff';
+    else if(v>0.3) bar.style.background='#00e8cc';
+    else bar.style.background='rgba(255,255,255,0.12)';
   });
-
-  levelRAF = requestAnimationFrame(drawLevel);
+  raf=requestAnimationFrame(drawBars);
 }
 
-// Prevent accidental scroll interference with sliders
-document.querySelectorAll('input[type=range]').forEach(slider => {
-  slider.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+// ââ PWA Service Worker ââââââââââââââââââââââââââââââââââââ
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+// ââ Visibility change â iOS background ê°ì§ âââââââââââââââ
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden && ctx && ctx.state==='suspended'){
+    ctx.resume().catch(()=>{});
+  }
 });
 </script>
 </body>
