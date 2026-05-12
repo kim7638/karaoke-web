@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>🎤 방구석 노래방</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --neon-pink: #ff3cac;
+    --neon-teal: #00f5d4;
+    --neon-yellow: #ffe45e;
+    --text: #f0f0f0;
+    --muted: #888;
+    --danger: #ff4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255,60,172,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0,245,212,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 60% 40%, rgba(255,228,94,0.05) 0%, transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px 32px;
+  }
+
+  /* Header */
+  .header {
+    padding: 52px 0 24px;
+    text-align: center;
+  }
+  .header-icon {
+    font-size: 48px;
+    line-height: 1;
+    display: block;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 20px rgba(255,60,172,0.6));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .header h1 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--neon-pink), var(--neon-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-label .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--neon-pink);
+    box-shadow: 0 0 8px var(--neon-pink);
+  }
+
+  /* URL Input */
+  .url-row {
+    display: flex;
+    gap: 8px;
+  }
+  .url-input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .url-input:focus { border-color: rgba(255,60,172,0.5); }
+  .url-input::placeholder { color: var(--muted); }
+
+  .btn-load {
+    background: linear-gradient(135deg, var(--neon-pink), #784ba0);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.5px;
+  }
+  .btn-load:active { opacity: 0.8; transform: scale(0.97); }
+
+  /* Video container */
+  .video-wrap {
+    display: none;
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .video-wrap.visible { display: block; }
+  .video-wrap iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+  }
+
+  /* Mic section */
+  .mic-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mic-btn {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 36px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: visible;
+  }
+  .mic-btn.active {
+    background: rgba(255,60,172,0.15);
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 0 0 rgba(255,60,172,0.4);
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255,60,172,0.4); }
+    70% { box-shadow: 0 0 0 20px rgba(255,60,172,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,60,172,0); }
+  }
+  .mic-btn-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 4px;
+    color: var(--muted);
+  }
+  .mic-btn.active .mic-btn-label { color: var(--neon-pink); }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .status-badge.on {
+    background: rgba(0,245,212,0.1);
+    color: var(--neon-teal);
+    border-color: rgba(0,245,212,0.3);
+  }
+  .status-badge.error {
+    background: rgba(255,68,68,0.1);
+    color: var(--danger);
+    border-color: rgba(255,68,68,0.3);
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .status-badge.on .status-dot { animation: blink 1s ease-in-out infinite; }
+  @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
+
+  /* Volume sliders */
+  .vol-row {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .vol-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .vol-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+  .vol-label { font-size: 12px; color: var(--muted); width: 36px; flex-shrink: 0; }
+
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+  .slider-mr {
+    background: linear-gradient(to right, var(--neon-teal) var(--val, 70%), rgba(255,255,255,0.1) var(--val, 70%));
+  }
+  .slider-mic {
+    background: linear-gradient(to right, var(--neon-pink) var(--val, 70%), rgba(255,255,255,0.1) var(--val, 70%));
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .vol-value {
+    font-size: 12px;
+    color: var(--muted);
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* Level meter */
+  .level-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 20px;
+    width: 100%;
+    justify-content: center;
+  }
+  .level-bar {
+    width: 5px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+    height: 6px;
+    transition: height 0.08s ease, background 0.08s ease;
+  }
+
+  /* Notice */
+  .notice {
+    background: rgba(255,228,94,0.07);
+    border: 1px solid rgba(255,228,94,0.2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: rgba(255,228,94,0.8);
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+  }
+  .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Quick links */
+  .quick-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .quick-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    line-height: 1.4;
+    text-decoration: none;
+    display: block;
+  }
+  .quick-btn:active { background: rgba(255,255,255,0.1); transform: scale(0.97); }
+  .quick-btn span { display: block; font-size: 10px; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <i class="header-icon">🎤</i>
+    <h1>방구석 노래방</h1>
+    <p>YouTube MR + 마이크 동시 재생</p>
+  </div>
+
+  <!-- YouTube Section -->
+  <div class="card">
+    <div class="card-label"><span class="dot"></span> MR 재생</div>
+    <div class="url-row">
+      <input class="url-input" id="urlInput" type="url"
+        placeholder="YouTube URL 붙여넣기"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <button class="btn-load" onclick="loadVideo()">재생</button>
+    </div>
+    <div class="quick-links">
+      <button class="quick-btn" onclick="loadSample('https://www.youtube.com/watch?v=tbDRWBzxMDI')">
+        🎵 인기 노래방 MR
+        <span>샘플 재생</span>
+      </button>
+      <button class="quick-btn" onclick="openYoutube()">
+        🔍 YouTube에서 검색
+        <span>새 탭으로 열기</span>
+      </button>
+    </div>
+    <div class="video-wrap" id="videoWrap">
+      <div id="ytPlayer"></div>
+    </div>
+  </div>
+
+  <!-- Mic Section -->
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--neon-teal);box-shadow:0 0 8px var(--neon-teal)"></span> 마이크</div>
+    <div class="mic-main">
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+        🎙️
+        <span class="mic-btn-label" id="micBtnLabel">탭하여 시작</span>
+      </button>
+      <div class="status-badge" id="statusBadge">
+        <span class="status-dot"></span>
+        <span id="statusText">마이크 꺼짐</span>
+      </div>
+      <div class="level-wrap" id="levelMeter">
+        <!-- bars injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Volume Controls -->
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--neon-yellow);box-shadow:0 0 8px var(--neon-yellow)"></span> 볼륨 조절</div>
+    <div class="vol-row">
+      <div class="vol-item">
+        <span class="vol-icon">🎵</span>
+        <span class="vol-label">MR</span>
+        <input type="range" class="slider-mr" id="mrVol" min="0" max="100" value="70"
+          oninput="onMrVol(this.value)" style="--val:70%" />
+        <span class="vol-value" id="mrVolVal">70%</span>
+      </div>
+      <div class="vol-item">
+        <span class="vol-icon">🎤</span>
+        <span class="vol-label">목소리</span>
+        <input type="range" class="slider-mic" id="micVol" min="0" max="150" value="100"
+          oninput="onMicVol(this.value)" style="--val:67%" />
+        <span class="vol-value" id="micVolVal">100%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notice -->
+  <div class="notice">
+    <span class="notice-icon">💡</span>
+    <div>
+      <strong>사용 팁</strong><br>
+      무선 이어폰을 끼고 사용하면 MR + 내 목소리를 동시에 들을 수 있어요. iOS Safari에서 마이크 권한을 허용해 주세요. 이어폰 미착용 시 하울링이 발생할 수 있습니다.
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── YouTube IFrame API ───────────────────────────────────
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
+
+var player;
+var currentVideoId = null;
+
+window.onYouTubeIframeAPIReady = function() {
+  // ready
+};
+
+function extractVideoId(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtu.be')) return u.pathname.slice(1).split('?')[0];
+    return u.searchParams.get('v') || null;
+  } catch {
+    // maybe it's already an ID
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) return url.trim();
+    return null;
+  }
+}
+
+function loadVideo() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) { alert('YouTube URL을 입력해 주세요.'); return; }
+  const vid = extractVideoId(url);
+  if (!vid) { alert('올바른 YouTube URL이 아닙니다.'); return; }
+  renderPlayer(vid);
+}
+
+function loadSample(url) {
+  document.getElementById('urlInput').value = url;
+  loadVideo();
+}
+
+function openYoutube() {
+  window.open('https://www.youtube.com/results?search_query=노래방+MR', '_blank');
+}
+
+function renderPlayer(videoId) {
+  currentVideoId = videoId;
+  const wrap = document.getElementById('videoWrap');
+  wrap.classList.add('visible');
+
+  if (player) {
+    player.loadVideoById(videoId);
+    return;
+  }
+
+  player = new YT.Player('ytPlayer', {
+    videoId: videoId,
+    playerVars: {
+      playsinline: 1,
+      rel: 0,
+      modestbranding: 1,
+    },
+    events: {
+      onReady: function(e) {
+        e.target.setVolume(parseInt(document.getElementById('mrVol').value));
+        e.target.playVideo();
+      }
+    }
+  });
+}
+
+function onMrVol(val) {
+  document.getElementById('mrVolVal').textContent = val + '%';
+  document.getElementById('mrVol').style.setProperty('--val', val + '%');
+  if (player && player.setVolume) player.setVolume(parseInt(val));
+}
+
+// ─── Mic / Web Audio ─────────────────────────────────────
+var audioCtx = null;
+var micStream = null;
+var micSource = null;
+var micGain = null;
+var analyser = null;
+var micActive = false;
+var levelRAF = null;
+
+const BARS = 20;
+const levelMeter = document.getElementById('levelMeter');
+for (let i = 0; i < BARS; i++) {
+  const b = document.createElement('div');
+  b.className = 'level-bar';
+  levelMeter.appendChild(b);
+}
+const bars = levelMeter.querySelectorAll('.level-bar');
+
+function setStatus(type, text) {
+  const badge = document.getElementById('statusBadge');
+  const label = document.getElementById('statusText');
+  badge.className = 'status-badge ' + type;
+  label.textContent = text;
+}
+
+async function toggleMic() {
+  if (micActive) {
+    stopMic();
+  } else {
+    await startMic();
+  }
+}
+
+async function startMic() {
+  try {
+    setStatus('', '권한 요청 중...');
+
+    // iOS requires AudioContext to be created in user gesture
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        sampleRate: 44100
+      },
+      video: false
+    });
+
+    micStream = stream;
+    micSource = audioCtx.createMediaStreamSource(stream);
+
+    micGain = audioCtx.createGain();
+    micGain.gain.value = parseInt(document.getElementById('micVol').value) / 100;
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+
+    micSource.connect(micGain);
+    micGain.connect(analyser);
+    micGain.connect(audioCtx.destination);
+
+    micActive = true;
+
+    const btn = document.getElementById('micBtn');
+    const lbl = document.getElementById('micBtnLabel');
+    btn.classList.add('active');
+    lbl.textContent = '탭하여 끄기';
+
+    setStatus('on', '마이크 켜짐 🔴 LIVE');
+    drawLevel();
+
+  } catch (err) {
+    console.error(err);
+    if (err.name === 'NotAllowedError') {
+      setStatus('error', '마이크 권한이 거부됨');
+      alert('마이크 권한을 허용해 주세요.\n설정 > Safari > 마이크');
+    } else {
+      setStatus('error', '마이크 오류: ' + err.message);
+    }
+  }
+}
+
+function stopMic() {
+  if (micStream) {
+    micStream.getTracks().forEach(t => t.stop());
+    micStream = null;
+  }
+  if (micSource) { micSource.disconnect(); micSource = null; }
+  if (micGain) { micGain.disconnect(); micGain = null; }
+  if (analyser) { analyser.disconnect(); analyser = null; }
+
+  micActive = false;
+
+  const btn = document.getElementById('micBtn');
+  const lbl = document.getElementById('micBtnLabel');
+  btn.classList.remove('active');
+  lbl.textContent = '탭하여 시작';
+  setStatus('', '마이크 꺼짐');
+
+  if (levelRAF) { cancelAnimationFrame(levelRAF); levelRAF = null; }
+  bars.forEach(b => { b.style.height = '6px'; b.style.background = 'rgba(255,255,255,0.1)'; });
+}
+
+function onMicVol(val) {
+  document.getElementById('micVolVal').textContent = val + '%';
+  const pct = (val / 150 * 100).toFixed(0);
+  document.getElementById('micVol').style.setProperty('--val', pct + '%');
+  if (micGain) micGain.gain.value = val / 100;
+}
+
+function drawLevel() {
+  if (!analyser) return;
+  const dataArr = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(dataArr);
+
+  const step = Math.floor(dataArr.length / BARS);
+  bars.forEach((bar, i) => {
+    const val = dataArr[i * step] / 255;
+    const h = Math.max(4, val * 36);
+    bar.style.height = h + 'px';
+    if (val > 0.7) bar.style.background = 'var(--neon-pink)';
+    else if (val > 0.3) bar.style.background = 'var(--neon-teal)';
+    else bar.style.background = 'rgba(255,255,255,0.15)';
+  });
+
+  levelRAF = requestAnimationFrame(drawLevel);
+}
+
+// Prevent accidental scroll interference with sliders
+document.querySelectorAll('input[type=range]').forEach(slider => {
+  slider.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+});
+</script>
+</body>
+</html>
