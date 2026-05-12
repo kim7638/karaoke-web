@@ -280,13 +280,15 @@ async function startMic(){
     }
     if(ctx.state==='suspended') await ctx.resume();
 
-    // â¡ Silent loop â iOS keeps audio session alive in background
+    // â¡ Inaudible oscillator loop â iOS keeps audio session truly alive in background
+    // Pure silence gets suspended; sub-20Hz oscillator is inaudible but keeps session open
     if(!silentSrc){
-      const buf=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate); // 3s silent
-      silentSrc=ctx.createBufferSource();
-      silentSrc.buffer=buf;
-      silentSrc.loop=true;
-      silentSrc.connect(ctx.destination);
+      silentSrc=ctx.createOscillator();
+      const silentGain=ctx.createGain();
+      silentGain.gain.value=0.00001; // inaudible but non-zero
+      silentSrc.frequency.value=17;  // sub-sonic, can't hear it
+      silentSrc.connect(silentGain);
+      silentGain.connect(ctx.destination);
       silentSrc.start(0);
     }
 
@@ -376,9 +378,17 @@ if('serviceWorker' in navigator){
 
 // ââ Visibility change â iOS background ê°ì§ âââââââââââââââ
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden && ctx && ctx.state==='suspended'){
-    ctx.resume().catch(()=>{});
-  }
+  if(ctx && ctx.state==='suspended') ctx.resume().catch(()=>{});
+});
+
+// iOS PWA: pageshow fires when returning from background
+window.addEventListener('pageshow',()=>{
+  if(ctx && ctx.state==='suspended') ctx.resume().catch(()=>{});
+});
+
+// iOS: prevent audio session drop on focus
+window.addEventListener('focus',()=>{
+  if(ctx && ctx.state==='suspended') ctx.resume().catch(()=>{});
 });
 </script>
 </body>
