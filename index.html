@@ -7,197 +7,113 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="ë§ì´í¬"/>
 <meta name="theme-color" content="#0d0d12"/>
-<link rel="manifest" href="manifest.json"/>
 <title>ë§ì´í¬ ë¸ëë°©</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-
 body{
-  background:#0d0d12;
-  color:#f0f0f0;
+  background:#0d0d12;color:#f0f0f0;
   font-family:'Noto Sans KR',sans-serif;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
   min-height:100dvh;
   padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
-  gap:0;
 }
-
-/* subtle bg glow */
 body::before{
-  content:'';
-  position:fixed;inset:0;
+  content:'';position:fixed;inset:0;
   background:
-    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(180,80,255,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(0,200,180,0.06) 0%, transparent 60%);
-  pointer-events:none;
-  z-index:0;
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(180,80,255,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 100%,rgba(0,200,180,0.06) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
 }
-
 .wrap{
   position:relative;z-index:1;
   width:100%;max-width:360px;
-  display:flex;flex-direction:column;
-  align-items:center;gap:40px;
+  display:flex;flex-direction:column;align-items:center;gap:36px;
 }
-
-/* Title */
 .title{text-align:center}
 .title h1{
-  font-family:'Black Han Sans',sans-serif;
-  font-size:22px;letter-spacing:3px;
+  font-family:'Black Han Sans',sans-serif;font-size:22px;letter-spacing:3px;
   background:linear-gradient(135deg,#cc88ff,#00e8cc);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .title p{font-size:12px;color:#666;margin-top:6px;letter-spacing:0.5px}
-
-/* BIG MIC BUTTON */
 .mic-wrap{position:relative;display:flex;align-items:center;justify-content:center}
-
 .ring{
-  position:absolute;
-  width:160px;height:160px;
-  border-radius:50%;
+  position:absolute;border-radius:50%;
   border:1.5px solid rgba(255,255,255,0.06);
   animation:spin 8s linear infinite;
 }
+.ring:nth-child(1){width:160px;height:160px}
 .ring:nth-child(2){width:190px;height:190px;animation-duration:12s;animation-direction:reverse}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .mic-btn{
-  width:130px;height:130px;
-  border-radius:50%;
+  width:130px;height:130px;border-radius:50%;
   border:1.5px solid rgba(255,255,255,0.1);
   background:rgba(255,255,255,0.04);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:6px;
-  cursor:pointer;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
   position:relative;z-index:2;
 }
 .mic-btn:active{transform:scale(0.94)}
-
-.mic-btn.on{
-  background:rgba(200,80,255,0.12);
-  border-color:rgba(200,80,255,0.5);
-}
-.mic-btn.on .ring-pulse{
-  animation:pulse 1.4s ease-out infinite;
-}
-
+.mic-btn.on{background:rgba(200,80,255,0.12);border-color:rgba(200,80,255,0.5)}
 .ring-pulse{
-  position:absolute;inset:-20px;
-  border-radius:50%;
-  border:1.5px solid rgba(200,80,255,0.4);
-  opacity:0;
+  position:absolute;inset:-20px;border-radius:50%;
+  border:1.5px solid rgba(200,80,255,0.4);opacity:0;
 }
-@keyframes pulse{
-  0%{transform:scale(0.85);opacity:0.8}
-  100%{transform:scale(1.15);opacity:0}
-}
-
+.mic-btn.on .ring-pulse{animation:pulse 1.4s ease-out infinite}
+@keyframes pulse{0%{transform:scale(0.85);opacity:0.8}100%{transform:scale(1.15);opacity:0}}
 .mic-icon{font-size:44px;line-height:1}
 .mic-label{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#666;transition:color 0.3s}
 .mic-btn.on .mic-label{color:#cc88ff}
-
-/* Status */
 .status{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 20px;
-  border-radius:100px;
-  border:1px solid rgba(255,255,255,0.08);
-  background:rgba(255,255,255,0.03);
-  font-size:13px;color:#555;
-  transition:all 0.3s;
-  min-width:200px;justify-content:center;
+  display:flex;align-items:center;gap:8px;padding:8px 20px;
+  border-radius:100px;border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);font-size:13px;color:#555;
+  transition:all 0.3s;min-width:200px;justify-content:center;
 }
-.status.on{
-  border-color:rgba(0,232,200,0.3);
-  background:rgba(0,232,200,0.07);
-  color:#00e8cc;
-}
-.status.error{
-  border-color:rgba(255,80,80,0.3);
-  background:rgba(255,80,80,0.07);
-  color:#ff6060;
-}
-.status-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:currentColor;flex-shrink:0;
-}
+.status.on{border-color:rgba(0,232,200,0.3);background:rgba(0,232,200,0.07);color:#00e8cc}
+.status.error{border-color:rgba(255,80,80,0.3);background:rgba(255,80,80,0.07);color:#ff6060}
+.status-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
 .status.on .status-dot{animation:blink 1s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
-
-/* Level meter */
 .level{
   display:flex;align-items:flex-end;gap:3px;
-  height:40px;width:100%;max-width:240px;
-  justify-content:center;
+  height:40px;width:100%;max-width:240px;justify-content:center;
 }
-.bar{
-  width:6px;border-radius:3px;
-  background:rgba(255,255,255,0.08);
-  height:4px;
-  transition:height 0.07s ease,background 0.07s ease;
-  flex-shrink:0;
-}
-
-/* Volume */
-.vol-section{width:100%}
+.bar{width:6px;border-radius:3px;background:rgba(255,255,255,0.08);height:4px;transition:height 0.07s ease,background 0.07s ease;flex-shrink:0}
 .vol-row{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 20px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:16px;
+  display:flex;align-items:center;gap:12px;padding:14px 20px;width:100%;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;
 }
 .vol-icon{font-size:20px;flex-shrink:0}
 .vol-label{font-size:12px;color:#555;width:40px;flex-shrink:0}
 input[type=range]{
-  flex:1;-webkit-appearance:none;appearance:none;
-  height:3px;border-radius:3px;
-  background:linear-gradient(to right,#cc88ff var(--v,70%),rgba(255,255,255,0.1) var(--v,70%));
+  flex:1;-webkit-appearance:none;appearance:none;height:3px;border-radius:3px;
+  background:linear-gradient(to right,#cc88ff var(--v,50%),rgba(255,255,255,0.1) var(--v,50%));
   outline:none;cursor:pointer;
 }
 input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:22px;height:22px;border-radius:50%;
+  -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
   background:white;box-shadow:0 2px 6px rgba(0,0,0,0.5);
 }
 .vol-val{font-size:12px;color:#555;width:34px;text-align:right;flex-shrink:0}
-
-/* Hint */
 .hint{
-  background:rgba(255,200,50,0.06);
-  border:1px solid rgba(255,200,50,0.15);
-  border-radius:14px;
-  padding:14px 16px;
-  font-size:12px;color:rgba(255,200,80,0.75);
+  background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.15);
+  border-radius:14px;padding:14px 16px;font-size:12px;color:rgba(255,200,80,0.75);
   line-height:1.7;width:100%;
 }
 .hint strong{display:block;margin-bottom:4px;font-size:13px}
-
-/* Install banner */
-.install-hint{
-  font-size:11px;color:#444;text-align:center;
-  line-height:1.6;
-}
+.install-hint{font-size:11px;color:#444;text-align:center;line-height:1.6}
 .install-hint strong{color:#666}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="title">
     <h1>ð¤ ë§ì´í¬</h1>
     <p>ì íë¸ íê³  Â· ì´ ì± ë°±ê·¸ë¼ì´ë Â· ë¸ë</p>
   </div>
-
   <div class="mic-wrap">
     <div class="ring"></div>
     <div class="ring"></div>
@@ -207,110 +123,76 @@ input[type=range]::-webkit-slider-thumb{
       <span class="mic-label" id="micLabel">í­íì¬ ìì</span>
     </button>
   </div>
-
   <div class="status" id="status">
     <span class="status-dot"></span>
     <span id="statusTxt">ë§ì´í¬ êº¼ì§</span>
   </div>
-
   <div class="level" id="level"></div>
-
-  <div class="vol-section">
-    <div class="vol-row">
-      <span class="vol-icon">ð¤</span>
-      <span class="vol-label">ëª©ìë¦¬</span>
-      <input type="range" id="micVol" min="0" max="200" value="100"
-        oninput="onVol(this.value)" style="--v:50%"/>
-      <span class="vol-val" id="volVal">100%</span>
-    </div>
+  <div class="vol-row">
+    <span class="vol-icon">ð¤</span>
+    <span class="vol-label">ëª©ìë¦¬</span>
+    <input type="range" id="micVol" min="0" max="200" value="100" step="1"
+      oninput="onVol(this.value)" style="--v:50%"/>
+    <span class="vol-val" id="volVal">100%</span>
   </div>
-
   <div class="hint">
     <strong>ð¡ ì¬ì©ë²</strong>
-    1. ë¬´ì  ì´ì´í° ì°©ì©<br>
+    1. ë¬´ì  ì´ì´í° / ë¸ë£¨í¬ì¤ ì°ê²°<br>
     2. ë§ì´í¬ ë²í¼ í­ â ê¶í íì©<br>
     3. í ë²í¼ì¼ë¡ ì´ ì±ì ë°±ê·¸ë¼ì´ëë¡<br>
     4. YouTubeìì MR ì¬ì<br>
-    5. ì´ì´í°ì¼ë¡ MR + ë´ ëª©ìë¦¬ ëì ì²­ì·¨ ðµ
+    5. MR + ë´ ëª©ìë¦¬ ëì ì²­ì·¨ ðµ
   </div>
-
   <div class="install-hint">
-    Safari â <strong>ê³µì </strong> â <strong>í íë©´ì ì¶ê°</strong><br>
-    ì±ì²ë¼ ì¤ì¹íë©´ ë ìì ì ì¼ë¡ ìëí´ì
+    Safari ê³µì  ë²í¼ â <strong>í íë©´ì ì¶ê°</strong> íë©´<br>ì±ì²ë¼ ì¤ì¹ë¼ì ë ìì ì ì´ìì
   </div>
-
 </div>
 
 <script>
-// ââ Level meter bars ââââââââââââââââââââââââââââââââââââââ
-const BARS = 28;
-const levelEl = document.getElementById('level');
-for(let i=0;i<BARS;i++){
-  const b=document.createElement('div');
-  b.className='bar';
-  levelEl.appendChild(b);
-}
+// ââ Level meter ââââââââââââââââââââââââââââââ
+const BARS=28;
+const levelEl=document.getElementById('level');
+for(let i=0;i<BARS;i++){const b=document.createElement('div');b.className='bar';levelEl.appendChild(b);}
 const bars=[...levelEl.querySelectorAll('.bar')];
 
-// ââ Audio state âââââââââââââââââââââââââââââââââââââââââââ
-let ctx=null, micStream=null, micSrc=null, gainNode=null, analyser=null, raf=null;
-let silentSrc=null; // iOS background keep-alive
+// ââ Audio state ââââââââââââââââââââââââââââââ
+let ctx=null,micStream=null,micSrc=null,gainNode=null,analyser=null,raf=null,silentOsc=null;
 let isOn=false;
 
 function setStatus(type,txt){
-  const el=document.getElementById('status');
-  el.className='status '+type;
+  document.getElementById('status').className='status '+type;
   document.getElementById('statusTxt').textContent=txt;
 }
 
-async function toggleMic(){
-  if(isOn) stopMic(); else await startMic();
-}
+async function toggleMic(){if(isOn)stopMic();else await startMic();}
 
 async function startMic(){
   try{
     setStatus('','ì°ê²° ì¤...');
+    if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive',sampleRate:44100});
+    if(ctx.state==='suspended')await ctx.resume();
 
-    // â  AudioContext â must be in user gesture
-    if(!ctx){
-      ctx=new (window.AudioContext||window.webkitAudioContext)({
-        latencyHint:'interactive',
-        sampleRate:44100
-      });
-    }
-    if(ctx.state==='suspended') await ctx.resume();
-
-    // â¡ Inaudible oscillator loop â iOS keeps audio session truly alive in background
-    // Pure silence gets suspended; sub-20Hz oscillator is inaudible but keeps session open
-    if(!silentSrc){
-      silentSrc=ctx.createOscillator();
-      const silentGain=ctx.createGain();
-      silentGain.gain.value=0.00001; // inaudible but non-zero
-      silentSrc.frequency.value=17;  // sub-sonic, can't hear it
-      silentSrc.connect(silentGain);
-      silentGain.connect(ctx.destination);
-      silentSrc.start(0);
+    // 17Hz ì´ì ì£¼í â ê·ì ìë¤ë¦¬ì§ë§ iOS ì¤ëì¤ ì¸ì ì ì§
+    if(!silentOsc){
+      silentOsc=ctx.createOscillator();
+      const g=ctx.createGain();
+      g.gain.value=0.00001;
+      silentOsc.frequency.value=17;
+      silentOsc.connect(g);
+      g.connect(ctx.destination);
+      silentOsc.start(0);
     }
 
-    // â¢ Mic
     const stream=await navigator.mediaDevices.getUserMedia({
-      audio:{
-        echoCancellation:true,
-        noiseSuppression:true,
-        autoGainControl:false,
-      },
+      audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false},
       video:false
     });
-
     micStream=stream;
     micSrc=ctx.createMediaStreamSource(stream);
-
     gainNode=ctx.createGain();
     gainNode.gain.value=parseInt(document.getElementById('micVol').value)/100;
-
     analyser=ctx.createAnalyser();
     analyser.fftSize=128;
-
     micSrc.connect(gainNode);
     gainNode.connect(analyser);
     gainNode.connect(ctx.destination);
@@ -320,9 +202,7 @@ async function startMic(){
     document.getElementById('micLabel').textContent='í­íì¬ ëê¸°';
     setStatus('on','ð´ LIVE â ëª©ìë¦¬ ì¶ë ¥ ì¤');
     drawBars();
-
   }catch(err){
-    console.error(err);
     if(err.name==='NotAllowedError'){
       setStatus('error','ë§ì´í¬ ê¶í ê±°ë¶ë¨');
       alert('ë§ì´í¬ ê¶íì íì©í´ ì£¼ì¸ì.\nì¤ì  ì± â Safari â ë§ì´í¬ â íì©');
@@ -333,12 +213,11 @@ async function startMic(){
 }
 
 function stopMic(){
-  if(micStream) micStream.getTracks().forEach(t=>t.stop());
+  if(micStream)micStream.getTracks().forEach(t=>t.stop());
   if(micSrc){micSrc.disconnect();micSrc=null;}
   if(gainNode){gainNode.disconnect();gainNode=null;}
   if(analyser){analyser.disconnect();analyser=null;}
-  micStream=null;
-  isOn=false;
+  micStream=null;isOn=false;
   if(raf){cancelAnimationFrame(raf);raf=null;}
   bars.forEach(b=>{b.style.height='4px';b.style.background='rgba(255,255,255,0.08)';});
   document.getElementById('micBtn').classList.remove('on');
@@ -347,49 +226,58 @@ function stopMic(){
 }
 
 function onVol(v){
-  const pct=Math.round(v/200*100);
   document.getElementById('volVal').textContent=v+'%';
-  document.getElementById('micVol').style.setProperty('--v',pct+'%');
-  if(gainNode) gainNode.gain.value=v/100;
+  document.getElementById('micVol').style.setProperty('--v',Math.round(v/200*100)+'%');
+  if(gainNode)gainNode.gain.value=v/100;
 }
 
 function drawBars(){
-  if(!analyser){return;}
+  if(!analyser)return;
   const data=new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(data);
   const step=Math.floor(data.length/BARS);
   bars.forEach((bar,i)=>{
     const v=data[i*step]/255;
-    const h=Math.max(4,v*36);
-    bar.style.height=h+'px';
-    if(v>0.7) bar.style.background='#cc88ff';
-    else if(v>0.3) bar.style.background='#00e8cc';
-    else bar.style.background='rgba(255,255,255,0.12)';
+    bar.style.height=Math.max(4,v*36)+'px';
+    bar.style.background=v>0.7?'#cc88ff':v>0.3?'#00e8cc':'rgba(255,255,255,0.12)';
   });
   raf=requestAnimationFrame(drawBars);
 }
 
-// ââ PWA Service Worker ââââââââââââââââââââââââââââââââââââ
+// ââ iOS ë°±ê·¸ë¼ì´ë ë³µê·ì AudioContext ì¬ê° ââ
+['visibilitychange','pageshow','focus'].forEach(ev=>{
+  window.addEventListener(ev,()=>{if(ctx&&ctx.state==='suspended')ctx.resume().catch(()=>{});});
+});
+
+// ââ PWA manifestë¥¼ Blob URLë¡ ëì  ì£¼ì ââââââ
+(function injectManifest(){
+  const m={
+    name:'ë§ì´í¬ ë¸ëë°©',short_name:'ë§ì´í¬',
+    description:'YouTube MR + ë§ì´í¬ ëì ì¬ì',
+    start_url:location.href,
+    display:'standalone',
+    background_color:'#0d0d12',theme_color:'#0d0d12',
+    orientation:'portrait',
+    icons:[{
+      src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230d0d12'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E%F0%9F%8E%A4%3C/text%3E%3C/svg%3E",
+      sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'
+    }]
+  };
+  const url=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'}));
+  const l=document.createElement('link');l.rel='manifest';l.href=url;
+  document.head.appendChild(l);
+})();
+
+// ââ Service Worker (Blob URL) âââââââââââââââââ
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
+  const sw=`
+    self.addEventListener('install',()=>self.skipWaiting());
+    self.addEventListener('activate',()=>clients.claim());
+    self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response(''))));
+  `;
+  const url=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
+  navigator.serviceWorker.register(url,{scope:'./'}).catch(()=>{});
 }
-
-// ââ Visibility change â iOS background ê°ì§ âââââââââââââââ
-document.addEventListener('visibilitychange',()=>{
-  if(ctx && ctx.state==='suspended') ctx.resume().catch(()=>{});
-});
-
-// iOS PWA: pageshow fires when returning from background
-window.addEventListener('pageshow',()=>{
-  if(ctx && ctx.state==='suspended') ctx.resume().catch(()=>{});
-});
-
-// iOS: prevent audio session drop on focus
-window.addEventListener('focus',()=>{
-  if(ctx && ctx.state==='suspended') ctx.resume().catch(()=>{});
-});
 </script>
 </body>
 </html>
